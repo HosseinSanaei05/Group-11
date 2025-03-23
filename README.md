@@ -1,3 +1,3 @@
 # Group-11
-حسین سنایی فر 
-شماره دانشجویی : 40313161046
+Hossein Sanaeifar
+student number : 40313161046
