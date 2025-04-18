@@ -37,12 +37,34 @@ void displayRecord() const {
 
 class DataBase
 {
+private:
+ map<string, vector<Record>> records;
+
 public:
 
-   void insertRecord(){}
-   void findRecords(){}
-   void updateRecord (){}
-   void deleteRecord(){}
+void insertRecord(const dbinfo& db) {
+    string table;
+    cout << "Enter table name to insert record into: ";
+    cin >> table;
+  
+    if (db.tableExists(table)==false) {
+        cout <<"eror!\n" <<"Table not found!" << endl;
+        return;
+    }
+  
+    vector<string> data;
+    string value;
+    cout << "Enter data for the record (type 'end' to finish):\n";
+  
+    while (true) {
+        cout << "Enter value (or 'end'): ";
+        cin >> value;
+        if (value == "end") break;
+        data.push_back(value);
+    }
+  
+    records[table].push_back(Record(table, data));
+    cout << "Record inserted successfully!" << endl;
+      }
 
-    
-};
+    };
