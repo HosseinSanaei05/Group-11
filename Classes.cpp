@@ -8,29 +8,22 @@ class column {
 protected:
     string columnName;
     string dataType;
-    bool isValide;
 
 public:
-    column(string Name, string Type) {
+//constructor for class column
+    column(string Name, string Type) {  
         columnName = Name;
         dataType = Type;
-        isValide = true;  // مقداردهی اولیه به isValide
+        
     }
 
-    //برای دریافت اسم ستون ها  gettr 
-    string getColumnName() const {
-        return columnName;
-    }
+   
+    string getColumnName() const {return columnName;} //برای دریافت اسم ستون ها  getter 
 
-    //برای دریافت تایپ ستون ها  gettr 
-    string getDataType() const {
-        return dataType;
-    }
-
-    bool getIsValide() const {
-        return isValide;
-    }
-
+    
+    string getDataType() const {return dataType;}//برای دریافت تایپ ستون ها  getter 
+    
+ 
     friend class dbinfo;
 };
 
@@ -38,81 +31,75 @@ class schema {
 public:
     string tableName;
     vector<column> Columns;
-
+//constructor for class schema 
     schema(string Name) {
         tableName = Name;
     }
 
+     
+
+// تابع برای ساخت ستون ها 
     void addColumn(string name, string type) {
         Columns.push_back(column(name, type));
     }
-
-    void display()
-     { 
-        cout << "Table: " << tableName << "\n-------------------" << endl;
-        cout << "Columns:" << endl;
-        for (const auto& COLUMN : Columns) {
-            cout<< COLUMN.getColumnName()
-                 << " (" << COLUMN.getDataType() << ")" << endl;
-        }
-        cout << "\n~~~~~~~~~~~~~~~~~~~~~~~" << endl;
-    }
+     
 
     friend class dbinfo;
 };
 
-class dbinfo {
+
+
+class dbinfo   {
 private:
     vector<schema> schemas;
 
 public:
-    void addSchema(const schema& s) {
+    void addSchema(const schema& s) {   // استفاده از &  برای جلوگیری از کپی غیر ضروری
         schemas.push_back(s);
     }
-
+   // تابع برای بررسی وجود جدول
     bool tableExists(string name) {
         for (const auto& s : schemas) {
-            if (s.tableName == name) return true;
+            if (s.tableName == name) 
+            return true;
         }
         return false;
     }
-
+   // تابع برای حذف جدول
     bool deleteTable(string name) {
-        for (auto it = schemas.begin(); it != schemas.end(); ++it) {
-            if (it->tableName == name) {
-                schemas.erase(it);
+        for (auto it = schemas.begin(); it != schemas.end(); ++it) {  // بررسی همه ی جدول ها تا پیدا کردن اسم جدول مورد نظر برای حذف
+            if (it->tableName == name) {  //(*it).tableName = it->tableName 
+                schemas.erase(it); // حذف میشود erase زمانی که جدول پیدا شد توسط دستور  
                 return true;
             }
         }
         return false;
     }
 
-    void displayTable(string name) {
-        for (auto& s : schemas) {
-            if (s.tableName == name) {
-                s.display();  
-                return;
-            }
-        }
-        cout << "No table found with name: " << name << endl;
-    }
-
-    void listTables() {
-        cout << "\nAvailable Tables:\n";
-        for (auto& s : schemas) {
-            cout << "- " << s.tableName << endl;
+     
+   // تابع چاپ جدول ها به همراه ستون ها و تایپ هر ستون 
+    void display_AllTable() {
+        int test=1; // متغیر برای دادن پیام به کاربر در صورت وجود نداشتن هیچ جدولی
+        cout << "\nAvailable Tables:\n"<<"========================\n";
+        for (auto& s : schemas) { //   ریخته و سپس هر جز را جداگانه چاپ میکند s این حلقه تمام اطلاعات جدول ها رو داخل متغیر   
+            cout << "Tablename: " << s.tableName << endl;
             cout << "  Columns:\n";
-            for (const auto& col : s.Columns) {
-                cout << "   * " << col.getColumnName() << " (" << col.getDataType() << ")" << endl;
+            // گرفته و چاپ میکند column  از کلاس getter میریزد و سپس اطلاعات هر ستون رو با استفاده از colاین حلقه تمام ستون ها  را داخل متغیر 
+            for (const auto& col : s.Columns) { 
+                cout << "=> " << col.getColumnName() << " (" << col.getDataType() << ")" << endl;
+                test=0;
             }
             cout << "------------------------" << endl;
         }
+           if(test)
+           cout<<"No table found !!!";
     }
     
 };
 
+
 int main() {
-    dbinfo Q;
+    dbinfo DATA;
     int choice;
     string tableName, columnName, columnType;
     char start;
@@ -136,13 +123,13 @@ int main() {
         switch(choice) {
             case 1: {
                 cout << "Enter table name: ";
-                cin >> tableName;
+                cin >> tableName;  //  دریافت اسم جدول از کاربر
                 schema newTable(tableName);
 
                 int columnsCount;
-                cout << "Enter number of columns: ";
-                cin >> columnsCount;
-
+                cout << "Enter number of columns: ";// دریافت تعداد ستون ها 
+                cin >> columnsCount;   // دریافت تعداد ستون ها از کاربر
+                // حلقه برای دریافت ستون ها از کاربر
                 for (int i = 0; i < columnsCount; ++i) {
                     cout << "Enter column " << i + 1 << " name: ";
                     cin >> columnName;
@@ -150,12 +137,12 @@ int main() {
                     cin >> columnType;
                     newTable.addColumn(columnName, columnType);
                 }
-                Q.addSchema(newTable);
+                DATA.addSchema(newTable); // ساخت جدول
                 cout << "Table created successfully!" << endl;
                 break;
             }
             case 2:
-                Q.listTables();  // اینجا تمام جداول و ستون‌ها نمایش داده می‌شود
+                DATA.display_AllTable();  // اینجا تمام جداول و ستون‌ها نمایش داده می‌شود
                 break;
             case 3:
                 cout << "Add new record (not implemented)" << endl;
@@ -169,17 +156,17 @@ int main() {
             case 6:
                 cout << "Delete record (not implemented)" << endl;
                 break;
-            case 7:
+            case 7:// دستور حذف جدول
                 cout << "Enter table name to delete: ";
                 cin >> tableName;
-                if (Q.deleteTable(tableName)) {
+                if (DATA.deleteTable(tableName)) {
                     cout << "Table deleted successfully!" << endl;
                 } else {
-                    cout << "Table not found!" << endl;
+                    cout << "Table not found!" << endl; //در صورت موجود نبودن جدول
                 }
                 break;
             case 8:
-                cout << "Exiting..." << endl;
+                cout << "Exiting..." << endl; //پیام خروج از برنامه 
                 break;
             default:
                 cout << "Invalid choice! Please try again." << endl;
@@ -190,3 +177,6 @@ int main() {
 
     return 0;
 }
+
+
+
