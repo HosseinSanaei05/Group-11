@@ -41,30 +41,31 @@ private:
  map<string, vector<Record>> records;
 
 public:
-
 void insertRecord(const dbinfo& db) {
-    string table;
-    cout << "Enter table name to insert record into: ";
-    cin >> table;
-  
-    if (db.tableExists(table)==false) {
-        cout <<"eror!\n" <<"Table not found!" << endl;
-        return;
+        string table, input;
+
+        cout << "Enter table name to insert record into: ";
+        cin >> table;
+        cin.ignore();
+
+        if (!db.tableExists(table)) {
+            cout << "Error! Table not found!" << endl;
+            return;
+        }
+
+        vector<string> data;
+        cout << "Enter record data separated by commas(,)\n";
+        getline(cin, input);
+
+        stringstream ss(input);
+        string value;
+
+        while (getline(ss, value, ',')) {
+            data.push_back(value);
+        }
+
+        records[table].push_back(Record(table, data));
+        cout << "Record inserted successfully!" << endl;
     }
-  
-    vector<string> data;
-    string value;
-    cout << "Enter data for the record (type 'end' to finish):\n";
-  
-    while (true) {
-        cout << "Enter value (or 'end'): ";
-        cin >> value;
-        if (value == "end") break;
-        data.push_back(value);
-    }
-  
-    records[table].push_back(Record(table, data));
-    cout << "Record inserted successfully!" << endl;
-      }
 
     };
